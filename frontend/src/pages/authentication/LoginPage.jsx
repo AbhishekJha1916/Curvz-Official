@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Abstract from "../../assets/back.jpg";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      console.log(response.data);// Store token in localStorage
+      localStorage.setItem("token", response.data.token);
+      navigate("/market/store"); // Navigate to a protected route
+    } catch (err) {
+      setError(err.response.data.message || "Something went wrong");
+    }
+  };      
 
   const handleForgotPassword = () => {
     navigate("/user/auth/forgot-password");
@@ -25,17 +44,24 @@ const LoginPage = () => {
       <div className="w-full md:w-1/2 bg-gray-100 flex flex-col justify-center px-8 md:px-16 py-20 md:py-0">
         <h1 className="text-3xl font-bold mb-2 text-[#000]">Login</h1>
         <p className="mb-6 text-[#8B8B8B]">Please login to your account.</p>
-        <form className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
             placeholder="Username or Email"
+            value={email}
+            required
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
           />
           <input
             type="password"
             placeholder="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
           />
+          {error && <p className="text-red-500">{error}</p>}
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-[#8B8B8B]">
             <label className="flex items-center mb-2 md:mb-0">
               <input type="checkbox" className="mr-2" />

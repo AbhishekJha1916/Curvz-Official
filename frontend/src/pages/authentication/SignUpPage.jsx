@@ -4,6 +4,48 @@ import Abstract from "../../assets/back.jpg";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    gender: "",
+    day: "",
+    month: "",
+    year: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    // Combine day, month, year into a single date
+    const { day, month, year, ...rest } = formData;
+    const dateOfBirth = new Date(`${year}-${month}-${day}`);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...rest, dateOfBirth }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("User registered successfully");
+        navigate("/user/auth/login");
+      } else {
+        alert(data.error || "An error occurred");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };
 
   const handleLogin = () => {
     navigate("/user/auth/login");
@@ -39,31 +81,51 @@ const SignUpPage = () => {
         <p className="text-gray-500 mb-6">
           Let's get started. Want to be a part of something new?
         </p>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSignUp}>
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
             <input
               type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              required
               placeholder="First Name"
               className="w-full md:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
             />
             <input
               type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              required
               placeholder="Last Name"
               className="w-full md:w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
             />
           </div>
           <input
             type="email"
-            placeholder="Email or Mobile Number"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+            placeholder="Email"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
           />
           <input
             type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
             placeholder="Password"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
           />
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
             <select
+              name="day"
+              value={formData.day}
+              onChange={handleInputChange}
+              required
               className="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
             >
               <option>Day</option>
@@ -74,6 +136,10 @@ const SignUpPage = () => {
               ))}
             </select>
             <select
+              name="month"
+              value={formData.month}
+              onChange={handleInputChange}
+              required
               className="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
             >
               <option>Month</option>
@@ -97,6 +163,10 @@ const SignUpPage = () => {
               ))}
             </select>
             <select
+              name="year"
+              value={formData.year}
+              onChange={handleInputChange}
+              required
               className="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6A94FF]"
             >
               <option>Year</option>
@@ -118,6 +188,9 @@ const SignUpPage = () => {
                   type="radio"
                   name="gender"
                   value="Male"
+                  checked={formData.gender === "Male"}
+                  onChange={handleInputChange}
+                  required
                   className="mr-2"
                 />
                 Male
@@ -127,6 +200,9 @@ const SignUpPage = () => {
                   type="radio"
                   name="gender"
                   value="Female"
+                  checked={formData.gender === "Female"}
+                  onChange={handleInputChange}
+                  required
                   className="mr-2"
                 />
                 Female
