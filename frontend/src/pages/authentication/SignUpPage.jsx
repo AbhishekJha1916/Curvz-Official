@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Abstract from "../../assets/back.jpg";
 
@@ -24,7 +24,7 @@ const SignUpPage = () => {
     e.preventDefault();
 
     // Combine day, month, year into a single date
-    const { day, month, year, ...rest } = formData;
+    const { day, month, year, ...rest} = formData;
     const dateOfBirth = new Date(`${year}-${month}-${day}`);
 
     try {
@@ -79,7 +79,7 @@ const SignUpPage = () => {
       <div className="w-full md:w-1/2 bg-gray-100 flex flex-col justify-center px-8 md:px-16 py-20 md:py-0">
         <h1 className="text-3xl font-bold mb-2">Sign Up</h1>
         <p className="text-gray-500 mb-6">
-          Let's get started. Want to be a part of something new?
+          Let&apos;s get started. Want to be a part of something new?
         </p>
         <form className="space-y-4" onSubmit={handleSignUp}>
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
